@@ -1,0 +1,119 @@
+Website hosting in on Premesis
+---------------------------------
+
+
+yum install -y nano wget
+
+yum install -y httpd
+
+systemctl start httpd
+
+systemctl enable httpd
+
+yum install -y mariadb mariadb-server
+
+systemctl start mariadb
+
+systemctl enable mariadb
+
+mysql_secure_installation
+
+enter
+give the password and all give y y y y
+
+yum install -y openssh openssh-server openssh-clients openssh-libs
+
+( https://www.vultr.com/docs/how-to-install-php-7-3-on-an-arch-linux-webserver )
+
+rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+
+sudo yum install -y mod_php74w mod_php74w-cli mod_php74w-common mod_php74w-gd mod_php74w-mbstring mod_php74w-mcrypt mod_php74w-mysqlnd mod_php74w-xml
+
+
+sudo cp /etc/php.ini /etc/php.ini.bak
+
+sudo vim /etc/php.ini
+
+systemctl restart httpd.service
+
+( http://www.webmin.com/rpm.html )
+
+wget http://prdownloads.sourceforge.net/webadmin/webmin-1.941-1.noarch.rpm
+yum -y install perl perl-Net-SSLeay openssl perl-IO-Tty perl-Encode-Detect
+rpm -U webmin-1.941-1.noarch.rpm
+
+systemctl disable firewalld
+
+yum install -y iptables-services
+
+systemctl enable iptables
+
+https://Server-1:10000/
+
+
+https://server-1:10000/change-user/change.cgi?xnavigation=1
+
+https://www.rosehosting.com/blog/how-to-install-php-7-3-on-ubuntu-16-04/#Step-6-Change-the-PHP-version (total config information)
+
+https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-centos-7 (total config information)
+
+alternatives --config java
+
+
+Changing Hostname in Linux
+---------------------------
+
+
+hostname
+
+vim /etc/hostname
+
+hostname
+
+vim /etc/hosts
+
+reeboot
+
+hostnamectl
+
+
+
+pacman -S php php-apache
+
+/etc/apache/apache.conf
+
+yum -y remove php70w*
+
+yum -y install php74*
+
+yum list installed | grep -i mysql
+
+sudo yum remove php-cli mod_php php-common
+
+
+sudo yum install php73-cli mod_php73 php73-common
+
+sudo yum install -y httpd24 php73 mysql56-server php73-mysqlnd
+
+1st Step:-sudo yum remove –purge php*
+2nd Step:-sudo yum purge php*
+3rs Step:-sudo yum autoremove.
+4th Step:-sudo yum autoclean.
+5th Step:-sudo yum remove dbconfig-php.
+6th Step:-sudo yum dist-upgrade.
+
+Then install fresh PHP in ur system;
+7th Step:-sudo yum install php.
+
+Completely remove MySql from ubuntu 17.10 using terminal using folling code
+1st Step:-sudo yum remove –purge mysql*
+2nd Step:-sudo yum purge mysql*
+3rs Step:-sudo yum autoremove.
+4th Step:-sudo yum autoclean.
+5th Step:-sudo yum remove dbconfig-php.
+6th Step:-sudo yum dist-upgrade.
+
+Then install fresh Mysql in ur system;
+7th Step:-sudo yum install mysql-server.

@@ -1,0 +1,86 @@
+
+
+
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+
+
+
+sudo yum-config-manager  --add-repo  https://download.docker.com/linux/centos/docker-ce.repo
+
+
+sudo yum-config-manager --enable docker-ce-nightly
+
+
+sudo yum-config-manager --enable docker-ce-test
+
+
+yum install docker-ce docker-ce-cli containerd.io
+
+yum install docker 18.09.2.ce
+
+
+sudo systemctl start docker
+
+
+sudo systemctl enable docker
+
+
+
+sudo docker run hello-world
+
+
+sudo yum install /path/to/package.rpm
+
+
+sudo systemctl enable docker
+
+
+sudo docker run hello-world
+
+
+to create swarm manager in docker
+
+docker swarm init --advertise-addr 192.168.99.100
+
+
+https://www.youtube.com/watch?v=OOhs9PILqe8
+
+
+
+https://www.youtube.com/watch?v=__knpcBRLHg
+
+
+https://www.youtube.com/watch?v=62ju_iFXoHE
+
+yum install java-devel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

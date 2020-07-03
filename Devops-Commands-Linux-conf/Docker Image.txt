@@ -1,0 +1,43 @@
+
+# Pull base image
+From tomcat:8-jre8
+
+# Maintainer
+MAINTAINER "Suresh <ysuresh0588@gmail.com">
+
+# Copy to images tomcat path
+ADD hello-world-1.2.war /usr/local/tomcat/webapps/
+
+
+
+
+FROM tomcat:latest
+
+MAINTAINER Y Suresh
+
+ADD ./target/*.war /usr/local/tomcat/webapps
+
+
+target/hello-world-1.2.war
+
+COPY ./hello-world-1.2.war /usr/local/tomcat/webapps
+
+
+
+/var/lib/jenkins/workspace/frestylejob/target/hello-world-1.2.war
+
+
+/opt/tomcat/apache-tomcat/webapps
+
+
+docker build -t simple-suri-image:latest .
+
+
+
+https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html   (POM.xml file and build)
+
+
+DockeHub
+
+sureshyn
+Suresh@988

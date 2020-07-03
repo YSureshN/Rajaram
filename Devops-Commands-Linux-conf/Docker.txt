@@ -1,0 +1,314 @@
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh get-docker.sh
+service docker start
+
+
+https://www.youtube.com/watch?v=nMLQgXf8tZ0  (configure in jenkins ansible and docker)
+
+
+service docker status
+systemctl enable docker
+
+yum install docker* -y
+apt-get install docker* -y
+
+--------------------------------------------------
+
+docker info
+docker images
+docker search hello-world
+docker pull hello-world
+docker pull centos
+docker images
+docker run -it image-name
+docker run -it centos
+exit
+docker ps (running container's)
+docker ps -a (all conatiner's)
+docker run -it centos
+exit
+docker ps -a
+docker start cid
+docker stop cid
+docker pause cid
+docker restart cid
+docker ps -a
+docker ps
+docker attach cid
+exit
+
+docker run -it centos
+ctrl+p+q
+docker ps
+docker stop cid
+
+docker run -itd centos
+docker ps
+docker attach cid
+--------------------------------------------
+docker run -itd ubuntu
+
+docker stop cid
+docker kill cid
+docker start cid
+docker restart cid
+docker pause cid
+docker ps
+docker attach cid
+docker unpause cid
+
+docker run -it centos
+yum install git -y
+
+docker ps -a
+
+docker rm cid  (to delete a container)
+docker rm -f cid  (to delete a running container)
+
+
+
+docker rm cid cid cid
+
+docker images
+docker rmi iid/i-name
+docker rmi -f iid
+docker rmi iid iid iid
+
+
+docker run -it centos
+yum install git java -y
+clone any git repo
+ctrl+p+q
+docker ps
+docker commit cid
+docker images
+docker tag cid testcentos
+
+login into docker-hub
+create a repo
+docker tag cid name (must = reponame)
+docker login
+user and passwd
+docker push org/repo
+
+
+
+docker pull centos
+docker pull centos:7
+docker images
+
+docker run -it centos:7
+
+vim Dockerfile
+
+FROM centos
+MAINTAINER prasad
+RUN mkdir /opt/test
+RUN touch /opt/test/file1
+RUN yum install git -y
+RUN yum install java -y
+RUN yum install wget -y
+RUN cd /opt/test && wget http://mirrors.estointernet.in/apache/tomcat/tomcat-9/v9.0.22/bin/apache-tomcat-9.0.22-deployer.tar.gz
+RUN cd /opt/test && tar -xvf apache-tomcat-9.0.22-deployer.tar.gz
+EXPOSE 8080
+
+docker build -t devops:centos .   (imagename:tagname)
+t= tag name
+.= current location other wise should give path
+
+sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch (it's for docker and elk)
+
+sudo yum clean all
+sudo yum makecache
+
+
+
+
+docker network create --subnet 10.1.0.0/16 --gateway 10.1.0.1 --ip-range 10.1.5.0/24 --driver bridge --label my-network Bridge-1
+
+docker run -it --net bridge-1 --ip 10.1.0.100 centos
+
+
+Docker-compose Instaling
+----------------------
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+
+docker-compose --version
+
+vim docker-compose.yml
+
+
+version: '3.3'
+
+services:
+   db:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+   wordpress:
+     depends_on:
+       - db
+     image: wordpress:latest
+     ports:
+       - "8000:80"
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+       WORDPRESS_DB_NAME: wordpress
+volumes:
+    db_data: {}
+:wq!
+
+
+sudo chmod +x /usr/local/bin/docker-compose
+
+docker-compose up -d
+docker-compose down
+
+cd /var/lib/docker
+
+docker logs CID (we can see the cid logs)
+
+docker logs --follow CID (we can see the cid live logs)
+
+docker hidstory image-id  (for image information)
+
+docker file for own image creating purpose
+
+docker-compose for multipun containers up and down
+
+
+docker history Image-ID (we see the image detailswhile creating)
+docker logs CID
+
+docker rename old-name new-name (for containers)
+
+Note--
+
+We can create centos containers and can enter in to inside the container and can create the different users there but one thing docker attach or exec use will enter through root user only in case if we want particular user with login 
+
+docker exec -it -u suresh server-2 /bin/bash
+
+docker attach CID
+Hostname
+CID
+
+by defauld hostname is the CID
+
+Docker events or stop start like that
+
+docker events --science "1h"
+docker events --filter event=stop
+docker top CID
+docker stats CID
+docker run -itd -m 555 centos
+
+
+
+how to push data to dockerhub
+--------------------------
+docker login
+username/password
+
+docker push
+
+docker commit cid centos-5 (container to image)
+docker run -itd centos-5 (image to container)
+
+
+Valume Maping
+-------------
+
+docker run -itd -v /opt/docker/volume:/opt/share centos (host to container)
+docker run -itd --volumes-from CID centos (exist container to new container valume maping)
+touch a(1...10)
+
+jenkins or tomcat
+------------------
+
+if we launch the any container we should edit some file inside that is how we are going to learn
+
+docker exec CID /bin/bash/ (exec only we should use for jenkins and tomcat)
+
+docker ps -a
+
+docker ps -aq
+docker images
+docker images -q
+
+
+local tomcat server exact location 
+
+docker cp context.xml CID:/usr/local/tomcat/webapps/manager/META-INF
+docker cp tomcat-users.xml CID:/usr/local/tomcat/conf
+
+
+
+COPY context.xml /opt/tomcat/apache-tomcat-9.0.10/webapps/manager/META-INF
+
+
+execute shell (jenkins)
+
+whoami
+sudo docker pull centos
+sudo docker images
+sudo docker rm -rf server-1
+sudo docker run -itd --name server-1 centos
+sudo docker ps
+
+---------
+docker group lo jenkins user ni add cheyali
+usermod -aG docker jenkins
+
+execute shell (jenkins)
+
+whoami
+sudo docker pull tomcat
+sudo docker images
+sudo docker stop server1
+sudo docker rm server1
+sudo docker run -itd -p 8085:8080 --name server1 tomcat
+sudo docker cp context.xml server1:/usr/local/tomcat/webapps/manager/META-INF
+sudo docker cp tomcat-users.xml server1:/usr/local/tomcat/conf
+
+
+sudo docker ps
+
+
+Note---
+while exicuting it will take default
+
+this context.xml , tomcat-users.xml are keep in github like pom.xml file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

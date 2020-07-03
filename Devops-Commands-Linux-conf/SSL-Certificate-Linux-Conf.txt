@@ -1,0 +1,70 @@
+https://www.youtube.com/watch?v=YR6-6XUC3sY (for VHost)
+
+{https://www.youtube.com/watch?v=ZbdQUQFWpGE (SSL Intelugu)
+
+First purchace domain in godady
+https://dash.cloudflare.com/5143238672a67c694094b8b8a483b69c/add-site  ( for ssl puchasing )
+it will give two name servers
+this two name servers configure in godady DNS place
+after this our webservice dashbord there download plugin https or really simple ssl install and active here}
+
+
+yum update -y
+
+rpm -qa | grep -i httpd
+
+yum install httpd -y
+
+yum install mod_ssl -y
+
+netstat -tupan | grep -i httpd
+
+ls /etc/httpd/conf/httpd.conf
+
+ls /etc/httpd/conf.d/ssl.conf
+
+yum install vim vim-enhanced -y
+
+vim /etc/httpd/conf.d/ssl.conf
+
+SSLProtocal all -SSlv2 -SSlv3
+
+</VirtualHost>
+
+
+<VirtualHost *:443>
+SSlEngine on
+
+SSLCertificateFile     xxxxx
+SSLCertificateKeyFile  xxxx
+
+ServerName      WWW.KH.com
+ServerAdmin     admin@kh.com
+DocumentRoot    /var/www/html/kh.com
+</VirtualHost>
+
+htpd -t
+
+mkdir /var/www/html/kh.com
+vim /var/www/html/kh.com/index.html
+
+<h1>
+ 
+ welcome to my first ssl certificate
+
+</h1>
+
+Keep code here
+
+yum install links -y
+
+vim /etc/hosts
+
+192.168.198.54   www.kh.com
+
+service httpd restart
+
+links https://www.KH.com
+
+
+https://www.youtube.com/watch?v=JbQbwum196g (AWS)

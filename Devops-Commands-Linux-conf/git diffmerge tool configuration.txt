@@ -1,0 +1,14 @@
+https://sourcegear.com/diffmerge/webhelp/sec__git__windows__cygwin.html
+
+
+$ git config --global merge.tool diffmerge
+$ git config --global mergetool.diffmerge.trustExitCode true
+$ git config --global mergetool.diffmerge.cmd 
+    "C:/Program\ Files/SourceGear/Common/DiffMerge/sgdm_cygwin.sh
+        -merge -result=\"\$MERGED\"
+            -p1=\"\$LOCAL\" -p2=\"\$BASE\" -p3=\"\$REMOTE\""
+
+
+
+
+git mergetool

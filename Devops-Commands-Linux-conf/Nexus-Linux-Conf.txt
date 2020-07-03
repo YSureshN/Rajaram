@@ -1,0 +1,95 @@
+requently Asked Questions:
+
+Q:  What is the risk associated with this vulnerability?
+
+A:  An unauthenticated attacker can inject and execute code on the server potentially affecting confidentiality, integrity, and availability.
+
+ 
+
+Q: What preconditions must be met in order to be vulnerable?
+
+A: The attacker would need to send specially crafted requests to NXRM.
+
+ 
+
+Q: Are there implications associated with this advisory itself?
+
+A: Disclosure unfortunately means bad actors may try to take advantage.  While we have initially limited the information to the minimum details necessary for users to affect an appropriate fix, this merely slows down a would be attacker.  As such, we are advising all organizations utilizing Nexus Repository Manager to immediately assess their individual impact and take appropriate action in response.
+
+ 
+
+Q:  Where can I obtain more information associated with the vulnerability?
+
+A:  At this time, and in the interest of best protecting our user community, we are limiting the information released to that absolutely required in order to assess impact and affect remediation. Please contact support for more information.
+
+ 
+
+Q:  Why is Sonatype making this information available?
+
+A:  This is part of a responsible disclosure process.  Given Nexus Repository Manager is an open source project with over 150,000 active server installations, notifying the user base will invariably lead to broad dissemination.  We are taking a concerted and proactive approach in our outreach activities and an effort to achieve the most rapid remediation possible.
+Nexus Installation
+Nexus is one a artifact repository which helps to store your build outcomes.
+
+Follow this article in **Youtube
+Prerequisites
+EC2 instance with java
+Implementation steps
+Download and setup nexus stable version
+
+
+yum install java-1.8.0-openjdk -y
+
+cd /opt
+
+wget https://sonatype-download.global.ssl.fastly.net/nexus/3/nexus-3.0.2-02-unix.tar.gz
+
+tar -zxvf  nexus-3.0.2-02-unix.tar.gz
+
+mv /opt/nexus-3.0.2-02 /opt/nexus
+
+As a good security practice, it is not advised to run nexus service as root. so create new user called nexus and grant sudo access to manage nexus services
+
+sudo adduser nexus
+
+# visudo \\ nexus   ALL=(ALL)       NOPASSWD: ALL
+
+sudo chown -R nexus:nexus /opt/nexus
+
+Open /opt/nexus/bin/nexus.rc file, uncomment run_as_user parameter and set it as following.
+
+vi /opt/nexus/bin/nexus.rc
+
+run_as_user="nexus" (file shold have only this line)
+
+Add nexus as a service at boot time
+
+sudo ln -s /opt/nexus/bin/nexus /etc/init.d/nexus
+
+Login as a nexus user and start service
+
+su - nexus
+service nexus start
+Login nexus server from browser on port 8081
+
+http://<Nexus_server>:8081
+
+Use default credentials to login
+
+username : admin
+password : admin123
+
+https://www.youtube.com/watch?v=qbO4MTESiJQ (this video for intigration to pom.xml and vim /etc/maven/settings.xml)
+
+Troubleshooting
+service is not starting?
+
+make sure you are trying to start service with nexus user.
+check java installation
+Unable to access nexus URL?
+
+make sure port 8081 is opened in security group.
+Next Steps
+ Configure Users & Groups in Jenkins
+ Secure your Jenkins Server
+ Jenkins Plugin Installation
+ Jenkins Master-Slave Configuration

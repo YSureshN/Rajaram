@@ -1,0 +1,36 @@
+AWS-CLI Instalation
+---------------------
+
+python --version
+
+curl "https://s3.amazonaws/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+
+yum install unzip -y
+
+unzip awscli-bundle.zip
+
+sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+
+aws s3 ls
+
+aws s3 mb s3://suresh
+
+aws s3 rb s3://suresh
+
+aws ec2 iam list_users --output table
+
+aws ec2 mata_data
+
+aws ec2 describe_instance --output table
+
+
+
+AWS-Active Directory
+
+
+https://www.youtube.com/watch?v=s15ljWSTWY4  (fsx)
+
+https://www.youtube.com/watch?v=44R_rP7QaVI (Workspace)
+
+
+https://learn.hashicorp.com/terraform/getting-started/build  (Terraform)

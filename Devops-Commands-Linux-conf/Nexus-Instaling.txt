@@ -1,0 +1,38 @@
+INSTALLING NEXUS IN CENTOS7
+January 10, 2018
+[root@node1 ~]# wget http://download.sonatype.com/nexus/3/latest-unix.tar.gz
+
+[root@node1 ~]# tar xvf latest-unix.tar.gz -C /opt
+
+[root@node1 ~]# cd /opt/nexus-3.7.1-02/
+
+[root@node1 nexus-3.7.1-02]# ls
+
+bin deploy etc lib LICENSE.txt NOTICE.txt public system
+
+[root@node1 nexus-3.7.1-02]# ./bin/nexus start
+
+WARNING: ************************************************************
+WARNING: Detected execution as “root” user. This is NOT recommended!
+WARNING: ************************************************************
+
+Starting nexus
+
+[root@node1 nexus-3.7.1-02]# netstat -tln (for local connection) netstat -r (for global)
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address Foreign Address State
+tcp 0 0 0.0.0.0:8081 0.0.0.0:* LISTEN
+
+[root@node1 nexus-3.7.1-02]# ln -s /opt/nexus-3.18.1-01/bin/nexus/etc/init.d/nexus
+
+[root@node1 nexus-3.7.1-02]# service nexus status
+WARNING: ************************************************************
+WARNING: Detected execution as “root” user. This is NOT recommended!
+WARNING: ************************************************************
+nexus is running.
+
+http://35.184.36.83:8081/
+
+
+
+sudo yum install java-1.8.0-openjdk.x86_64

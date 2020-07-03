@@ -1,0 +1,42 @@
+https://stackoverflow.com/questions/27719353/dockerfile-for-tomcat
+
+This is what i did to solve this:
+
+Dockerfile
+
+FROM tomcat
+
+MAINTAINER richard
+
+RUN apt-get update && apt-get -y upgrade
+
+WORKDIR /usr/local/tomcat
+
+COPY tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
+COPY context.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
+
+EXPOSE 8080
+I'm copying those two files in order to access the manager app from outside. If you want it too, add the following to your context and tomcat-users files
+
+Context.xml
+
+<Context antiResourceLocking="false" privileged="true" >
+    <!-- <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+        allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> -->
+    <Manager sessionAttributeValueClassNameFilter="java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|java\.util\.(?:Linked)?HashMap"/>
+</Context>
+tomcat-users.xml
+
+<tomcat-users xmlns="http://tomcat.apache.org/xml"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd"
+              version="1.0">
+  <user username="admin" password="secret" roles="manager-gui"/>
+</tomcat-users>
+Then you can build it and run it:
+
+docker build -t name/tomcat .
+docker run -d -p 8080:8080 --name some_name name/tomcat
+Deploy your application as follows:
+
+docker cp some/app.war some_name:/usr/local/tomcat/webapps/app.war

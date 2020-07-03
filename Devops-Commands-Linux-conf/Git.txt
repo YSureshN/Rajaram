@@ -1,0 +1,423 @@
+
+how will you know the in git if a branch has been already mergerd into master?
+
+git branch--merged list the branches that have been merged into the master
+
+
+git branch--no merged list the branches that have not been merged into the master
+
+
+
+knife [:editor]='vim'
+
+git commit --amend -m -m 
+
+git merge --abort (without fixing merge conflict skiping)h
+
+git revert cid
+
+
+git init  -- to initilize the git repo
+ls
+ls -a
+git config --global user.name "Prasad"
+git config --global user.email "prasad@gmail.com"
+
+git config --list
+
+touch file1
+ls
+git status
+git add file1
+git status
+git commit -m "1st commit" file1
+git status
+git log
+git show cid
+
+touch file3 file4 file5
+ls
+git status
+git add . or * or -A
+or 
+git add file3 file5 
+git status
+git commit -m "3rd commit"
+
+
+git add file-name ( workspace to staging)
+
+git reset HEAD file-name (staging to workspace)
+
+git commit -m "label" file-name (staging to local)
+
+git reset --soft cid  (local to staging)
+
+git reset --mixed cid (local to workspace)
+
+git reset --hard cid (to delete a cid)
+
+git clone https://github.com/polarapu/Batch-43.git
+ls
+cd Batch-43
+ls
+touch file1 file2
+git add .
+git commit -m "sample commit"
+git push
+
+git svn
+ 
+git clone https://github.com/polarapu/Batch-43.git
+cd Batch-43
+touch prasad
+git status
+git add .
+git commit -m "label" prasad
+git push
+git pull 
+esc :wq!
+git push
+
+mkdir prasad-dir
+cd prasad-dir
+touch f1 f2 f3 f4
+cd ..
+git status
+git add .
+git commit -m "label"
+git push
+
+rm f3
+
+git log
+git log -5
+git log --oneline
+git log --oneline -5
+git log --author=satish
+git log --author=shiva -2
+git log --author=shiva --oneline
+git log --author=shiva --oneline -3
+git log --since=2019-06-03
+or
+git log --after="2019-06-01"
+git log --until=2019-06-04
+or
+git log --before="2019-06-03"
+git log --since=2018-04-04 --until=2019-02-14
+or
+git log --after="2019-06-01" --before="2019-06-03"
+git log --after="2019-06-04 08:00" --before="2019-06-04 08:30"
+git log --grep="label"
+git log -- file1
+git log --author="prasad\|siva"
+
+git branch
+git branch release1
+git checckout release1
+
+git push --set-upstream https://github.com/YSureshN/java-war.git master  ( in case if we downlode any code fron another repsitary and pus to my reposity this command)
+
+
+git push --set-upstream master5
+
+touch f1 f2
+git add, commit
+git checkout master
+git log
+ls
+git merge release1
+git branch -d release1
+git checkout -b release5
+git branch -m old-name new-branch
+git branch
+
+
+git push path/of/c-repo
+
+or
+git push origin master1
+
+git push origin -d master2
+
+git cherry-pick cid   (we can merge a particular CID)
+
+================================
+LINUX
+--------
+touch, cat, and vim
+
+touch
+-------
+touch file-name
+ls
+touch file-name file-name file-name
+ls
+
+CAT
+-----
+cat > file-name
+.................
+.................
+ctrl+d
+ls
+cat file-name
+cat >> file-name
+.................
+.................
+ctrl+d
+ls
+cat file-name
+
+vi
+---
+vi file-name
+----------------
+esc i (insert mode)
+..............
+...............
+...............
+esc :w
+esc :q
+or
+esc :wq!
+
+git stash
+========
+git stash list
+touch file1
+git add .
+git stash save "stash1"
+git stash list
+git stash show -p stash@{0}
+
+pop
+apply
+drop
+
+pop
+-----
+git stash pop ( recent stash will come ) cut copy paste
+git stash pop stash@{x}
+
+apply
+--------
+git stash apply ( recent stash will come ) copy paste
+git stash apply stash@{x}
+
+drop
+------
+git stash drop
+git stash drop stash@{x}
+
+clear
+-------
+git stash clear
+
+alias
+------
+git status  ===>  git s
+git config --global alias.s "status"
+git config --list
+git log --oneline
+git l1
+git config --global alias.l1 "log --oneline"
+git config --global --unset alias.s
+
+git config --global --unset user.name
+
+-------------------------------------------------
+touch f1 f2 f3
+git status
+vi .gitignore
+f1
+f2
+f3
+
+:wq!
+
+git status
+vi f1
+--------
+....
+....
+:wq!
+
+git status
+
+REBASE
+------
+
+rebase is nothing but (we dont get the merge CID) remaing everithig same.
+
+REVERT
+----------
+
+just assume we keep editing F1 each commit before and after we can see the data.
+
+
+TAG
+------
+git tag
+git tag tag1.1
+git tag -d tag1.1
+git tag tag1.1 cid
+git push origin tag1.1
+
+git push origin -d tag1.1
+git push origin -d tag1.2 tag1.3
+
+git config --global push.followTags true
+git push origin <tag_name>
+git push --tags
+
+git commit -m "label" -m "label" (we can change commit name like "it can posibble only to resent commit")
+
+git commit --amend -m "lable" -m "label"
+
+git branch
+git branch -r
+git branch -a
+
+git fetch
+git show origin/master
+git merge origin/master
+
+
+====================
+
+<?xml version='1.0' encoding='utf-8'?>
+<tomcat-users>
+  <role rolename="manager-gui"/>
+  <user username="tomcat" password="Tomcat" roles="manager-gui, manager-script, manager-script, manager-status"/>
+</tomcat-users>
+
+
+VM Ware
+
+
+https://www.vmware.com/in/products/workstation-pro/workstation-pro-evaluation.html
+
+
+ISO Centos
+
+
+http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-DVD-1810.iso
+
+
+http://apachemirror.wuchna.com/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz
+
+http://apachemirror.wuchna.com/tomcat/tomcat-9/v9.0.21/bin/apache-tomcat-9.0.21.tar.gz
+
+https://pkg.jenkins.io/redhat/jenkins-2.181-1.1.noarch.rpm
+
+https://download.oracle.com/otn/java/jdk/8u211-b12/478a62b7d4e34b78b671c754eaaf38ab/jdk-8u211-linux-i586.tar.gz
+
+Java for aws instance
+
+wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u141-b15/336fa29ff2bb4ef291e347e091f7f4a7/jdk-8u141-linux-x64.rpm
+
+
+
+Enable epel
+
+yum install epel-release
+
+sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+
+
+Envirolment Setup
+===============
+
+vim /etc/profile.d/mvn.sh
+
+export M2_HOME=/opt/apache-maven-3.6.3
+export PATH=${M2_HOME}/bin:${PATH}
+
+source /etc/profile.d/mvn.sh
+
+./mvn.sh
+sh mvn.sh
+
+
+vim /etc/profile.d/java.sh
+
+export JAVA_HOME=/usr/bin/java             
+export PATH=${JAVA_HOME}/bin:${PATH}                 
+
+source /etc/profile.d/java.sh
+
+export JAVA_HOME=/usr/java/jdk1.8.0_141     default java path in linux AWS
+export PATH=${JAVA_HOME}/bin:${PATH}
+
+Server-1
+Suresh Kumar
+Suresh@988
+root
+Suresh@988
+
+Server-2
+Suresh
+Suresh@988
+
+root
+&&charan%%
+
+
+Maven
+------------
+
+
+Maven Build Failure
+
+mvn archetype:generate -DarchetypeCatalog=http://download.java.net/maven/2
+
+mvn archetype:generate
+
+Buils Success
+
+
+Server-1
+
+root=Suresh@988
+sureshkumar=Suresh@988
+
+192.168.198.145:8080 (niki:niki)
+
+192.168.198.145:8088 (tomcat) tomcat=Tomcat
+
+Server-2
+
+root=&&charan%%
+suresh=Suresh@988
+
+192.168.198.143:8080 (tomcat) tomcat=Tomcat
+192.168.198.143:8888 (Jenkins) (admin=admin)
+
+
+Server-3
+--------
+192.168.198.131
+
+root=Suresh@988
+suri=Suresh@988
+
+
+
+VM-WARE-14
+------------------
+YV54A-2ZW5P-M887Y-UWXNE-QPUXD
+VY3R2-0NW0L-H845Q-TDMXT-XQAT0
+VC7JR-A0Z97-08EGZ-M4YNV-XVHD0
+FC1TU-4RGEQ-084EP-2XQQX-ZGHWA
+CU1WA-8HGEN-M815Z-HQP5E-QKADF
+AY7D0-FTG44-H846Y-2XPGV-P32T8
+
+
+VM-WARE-15
+------------------
+YZ718-4REEQ-08DHQ-JNYQC-ZQRD0
+
+
+

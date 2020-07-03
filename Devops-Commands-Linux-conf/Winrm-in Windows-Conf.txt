@@ -1,0 +1,516 @@
+$url = "https://raw.githubusercontent.com/jborean93/ansible-windows/master/scripts/Upgrade-PowerShell.ps1"
+$file = "$env:temp\Upgrade-PowerShell.ps1"
+$username = "suresh"
+$password = "321"
+
+(New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
+
+# version can be 3.0, 4.0 or 5.1
+&$file -Version 5.1 -Username $username -Password $password -321
+
+
+
+============================
+
+https://www.guruoye.net/
+
+
+Automate Windows tasks using Ansible
+How to manage Windows Systems using ansible? In next 10 minutes it would be abundantly clear to you.
+Lately I am receiving requests to cover how to automate Windows machines using ansible.
+
+Ansible’s native Windows support uses Windows PowerShell remoting to manage Windows in the same Ansible agentless way that Ansible manages Linux.
+
+With Ansible’s native Windows support, you can, out of the box:
+
+Gather facts on Windows hosts
+Install and uninstall MSIs
+Enable and disable Windows Features
+Start, stop, and manage Windows services
+Create and manage local users and groups
+Manage Windows packages via the Chocolatey package manager
+Manage and install Windows updates
+Fetch files from remote sites
+Push and execute any PowerShell scripts you write
+
+The supported operating system versions are:
+Windows Server 2008
+Windows Server 2008 R2
+Windows Server 2012
+Windows Server 2012 R2
+Windows Server 2016
+Windows 7
+Windows 8.1
+Windows 10
+
+Host Requirements
+Ansible requires PowerShell 3.0 or newer and at least .NET 4.0 to be installed on the Windows host.
+
+That's being said some Ansible modules have additional requirements, such as a newer OS or PowerShell version.
+
+Note
+Windows Nano Server is not currently supported by Ansible, since it does not have access to the full .NET Framework. Ansible does not support managing Windows XP or Server 2003 hosts.
+
+If your Windows OS doesnt have PowerShell version =>3.0 and .NET Framework 4.0 or newer You can use the Upgrade-PowerShell.ps1 script to update these.
+https://github.com/jborean93/ansible-windows/blob/master/scripts/Upgrade-PowerShell.ps1
+
+Check powershell version using command $PSVersionTable.
+
+Check .Net framework version as shown here.
+From the Start menu, choose Run, enter regedit, and then run as administrator.
+In the Registry Editor, open the following subkey: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full. If the Full subkey isn't present, then you don't have the .NET Framework 4.5 or later installed.
+Check for a DWORD entry named Release. If it exists, then you have .NET Framework 4.5 or later versions installed.
+
+
+A bug exists in WinRM under PowerShell 3.0 that limits the memory available to the service, which, in turn, can cause some Ansible commands to fail.
+
+Here is how to upgrade windows powershell version.
+
+$url = "https://raw.githubusercontent.com/jborean93/ansible-windows/master/scripts/Upgrade-PowerShell.ps1"
+$file = "$env:temp\Upgrade-PowerShell.ps1"
+$username = "Administrator"
+$password = "Password"
+(New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
+# Version can be 3.0, 4.0 or 5.1
+&$file -Version 5.1 -Username $username -Password $password -Verbose
+
+Once completed, you will need to remove auto logon and set the execution policy back to the default of Restricted. You can do this with the following PowerShell commands:
+
+# This isn't needed but is a good security practice to complete
+Set-ExecutionPolicy -ExecutionPolicy Restricted -Force
+$reg_winlogon_path = "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon"
+Set-ItemProperty -Path $reg_winlogon_path -Name AutoAdminLogon -Value 0
+Remove-ItemProperty -Path $reg_winlogon_path -Name DefaultUserName -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path $reg_winlogon_path -Name DefaultPassword -ErrorAction SilentlyContinue
+
+All codes and step by step detail is available at
+https://www.guruoye.net
+WinRM Setup
+Once Powershell has been upgraded to at least version 3.0, the final step is for the WinRM service to be configured so that Ansible can connect to it.
+
+
+There are two main components of the WinRM service that governs how Ansible can interface with the Windows host: 
+the listener 
+the service configuration settings.
+
+
+The script ConfigureRemotingForAnsible.ps1 can be used to set up the basics. This script sets up both HTTP and HTTPS listeners with a self-signed certificate and enables the Basic authentication option on the service.
+https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1
+
+To use this script, run the following in PowerShell:
+$url = "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
+$file = "$env:temp\ConfigureRemotingForAnsible.ps1"
+(New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
+powershell.exe -ExecutionPolicy ByPass -File $file
+
+Once the script has run, you can get current winrm configuration using 
+
+winrm quickconfig -q
+winrm get winrm/config
+
+From the output we can see 
+AllowUnencrypted = false
+
+We need to enable AllowUnencrypted and Basic auth for winrm connection for basic winrm setup.
+
+In documentation it is suggested to run following command 
+
+winrm set winrm/config/service @{AllowUnencrypted="true"}
+winrm set winrm/config/service/auth @{Basic="true"} 
+
+However, it appears this command fails on latest Windows 10.
+
+But following powershell command worked
+
+Set-Item -Force WSMan:\localhost\Service\Allowunencrypted $True
+
+However, this requires network connection type should be set to private.
+Which could be done in this manner.
+
+Once done both commands worked like charm.
+
+Set-Item -Force WSMan:\localhost\Service\Allowunencrypted $True
+Set-Item -Force WSMan:\localhost\Service\auth\Basic $True
+
+Connecting Ansible to Windows
+Once WinRM is configured we proceed to next step.
+
+Here is our the content of /etc/hosts of the ansible control node.
+
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+192.168.31.110     ansible.example.com  ansible
+192.168.31.111     node1.example.com    node1
+192.168.31.112     node2.example.com    node2
+192.168.31.183     win10.example.com    win10
+
+Here win10 is the Windows machine 
+
+
+In my test environment, I would prepare an inventory as follows to connect to my newly configured Windows host:
+
+[windows]
+win10
+[windows:vars]
+ansible_user=Chanchal
+ansible_password="Password"
+ansible_port=5986
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore
+
+Note the connection specific variables beginning ansible_ that are being set in the windows:vars section of the playbook. 
+
+Note the ansible_winrm_server_cert_validation variable, which needs to be set to ignore when working with self-signed certificates.
+Obviously, in a real-world example, you would not leave the ansible_password parameter in clear text. It would either be placed in an Ansible vault, or prompted for upon launch using the --ask-pass parameter.
+
+Ansible requires the winrm Python module installed to connect successfully.
+
+On CentOS 7 you need to enable EPEL repository, you can install it with the following command:
+
+sudo yum install python2-winrm
+
+For winrm-based connectivity, there is an Ansible module called win_ping, which performs a full end-to-end test to ensure connectivity, successful authentication, and a usable Python environment on the remote system.
+
+We can run the following command to test connectivity:
+
+ansible windows -m win_ping 
+
+Next we will install windows package using win_chocolatey.
+
+Explore win_chocolatey documentation
+
+ansible-doc win_chocolatey
+
+We install notepad++ using command
+
+ansible windows -m win_chocolatey -a 'name=notepadplusplus state=present'
+
+Once the command is successfully executed we can see notepad++ is now available in windows system
+
+
+Next we install packages using playbook  win_package.yml
+Content of the playbook is here
+
+---
+- hosts: windows
+  tasks:
+  - name: Install firefox,winscp,curl
+    win_chocolatey:
+      name: '{{ item }}'
+      state: present
+    loop:
+    - firefox
+    - curl
+    - winscp
+
+Let us run this playbook and see the result.
+
+We can firefox and winscp icons have comeup on the desktop.
+
+Let us now summarise steps to get a basic working winrm setup for Windows10.
+
+Upgrade powershell to the desired version using script available from here in this URL
+https://github.com/jborean93/ansible-windows/blob/master/scripts/Upgrade-PowerShell.ps1
+
+Setup winrm using script by using script available from here in this URL 
+https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1
+
+Setup Basic and Unencrypted winrm remoting
+Set-Item -Force WSMan:\localhost\Service\Allowunencrypted $True
+Set-Item -Force WSMan:\localhost\Service\auth\Basic $True
+
+Configure windows network connection type to private.
+
+On ansible controller node install python2-winrm
+
+Set correct ansible_connection, ansible_user, ansible_winrm_server_cert_validation etc
+in ansible inventory file
+
+In today's session we have established the basic level of connectivity required for Ansible to perform tasks on a Windows host.
+While this is fine in a testing scenario, what happens in a domain environment?
+
+In my next session I will cover more advanced features of Ansible for Infrastructure automation.
+
+
+Posted by Chanchal Bose at 20:38 No comments: Links to this post  
+Email This
+BlogThis!
+Share to Twitter
+Share to Facebook
+Share to Pinterest
+Wednesday, 31 July 2019
+Ansible Variable Precedence and Inclusion
+
+
+Ansible Variable Precedence and Inclusion
+In ten minutes I'll give you a comprehensive understanding of ansible variables and how to manage them.
+Agenda
+How and where to define ansible variables
+Understand Variable scope and precedence
+Include variables and tasks from external files
+Variable naming convention
+Variables always begin with a letter cap or small([A-Za-z])
+Can include any number of underscores (_) or numbers ([0-9]).
+Should not start with a number or underscore. 
+Should not be special characters #@!.-*(){}&%$~?,: 
+Valid variables - foo, foo_bar, foo_bar_5
+
+Invalid variable names  - _foo, foo-bar, 5_foo_bar, foo.bar and foo bar.
+
+Variables in ansible could be defined at four different places
+Inside a playbook using vars:
+In a file outside the playbook using vars_files:
+In an inventory file or directory
+Set from the command line
+Variable Prcedence
+Variables defined in inventory could be overridden by variables defined by the playbook, 
+And variables defined playbook could be overridden by variables defined on the command line
+
+So the order of precedence is 
+Command line 
+Playbook
+Inventory
+Command line option
+Variables can be passed in via the command line, when calling ansible-playbook, with the --extravars option:
+
+ansible-playbook example.yml --extra-vars "foo=bar"
+
+Example user is defined to be alice in playbook.
+
+example.yml
+
+---
+- hosts: node2
+  remote_user: vagrant
+  become: true
+  vars:
+    user: alice
+  tasks:
+  - name: Create {{ user }}
+    user:
+      name: "{{ user }}"
+
+However we override user as john using --extra-variable in command line:
+
+$ ansible-playbook example.yml --extra-vars "user=john"
+
+Playbook Variables
+Commonly variables are declared in playbook in a vars section:
+
+Examples:
+---
+- hosts: example
+  vars:
+     foo: bar
+  tasks:
+#################
+---
+- hosts: example
+  vars:
+     users: 
+       - jhon
+       - rahul
+       - rahim
+  tasks:
+
+Try following example:
+ftpserver.yml
+Playbook creates an user alice in node2 and installs ftp server in node1.
+Starts ftp server.
+Uses vars, vars_files, include_vars and ansible_hostname.
+Here is the code
+
+ftpserver.yml
+
+---
+- hosts: all
+  become: true
+  remote_user: vagrant
+  vars:
+    users: alice
+  vars_files:
+    - packagelist.yml
+  tasks:
+  - name: Create users in node2
+    user: 
+      name: "{{ users }}"
+      state: present   
+    when: ansible_hostname == 'node2'
+  - name: Install {{ package }} in node1
+    yum:
+      name: "{{ package }}" 
+      state: latest
+    when: ansible_hostname == 'node1'
+  - name: include vars file
+    include_vars:
+      service_files: service.yaml
+  - name: start service in node1
+    service:
+      name: "{{ svc }}"
+      state: started
+
+service.yaml
+
+---
+svc: vsftpd
+
+packagelist.yml
+
+---
+package: 
+- vsftpd
+- wget
+
+Task inclusion
+Tasks in ansible could also be included in playbook using modules
+
+include                    Include a play or task list
+include_tasks              Dynamically include a task list
+include_vars               Load variables from files, dynamically within a task
+
+For using each of these modules you can refer to 
+
+ansible-doc -s include
+ansible-doc include_tasks
+
+Here is an example of task inclusion:
+
+ include_task.yml
+---
+- hosts: node2
+  become: true
+  remote_user: vagrant
+  tasks:
+  - name: configure apache server
+    include: apache.yml
+
+apache.yml
+---
+- name: Install apache
+  yum:
+    name: httpd
+    state: latest
+- name: Create index.html page
+  copy:
+    dest: /var/www/html/index.html
+    content: "Created by Ansible"
+- name: Start httpd service
+  service:
+    name: httpd
+    state: restarted
+
+Inventory Variable
+Variables are also defined in inventory files.
+Inventory variables that apply directly to hosts fall into two broad categories: 
+1. host variables that apply to a specific host
+2. group variables that apply to all hosts in a host group
+Here is an example inventory file
+
+[servers]
+host1   ansible_user=rahul
+host2   ansible_user=jim
+
+[servers:vars]
+ntp_server=ntp.bangalore.example.com
+proxy=proxy.bangalore.example.com
+
+
+First part [servers] defines host variables applicable to individual host.
+Second part [servers:vars] defines group variables applicable to a group of host.
+
+Host variables take precedence over group variables,
+but variables defined by a playbook take precedence over both
+
+Here ntp_servers and proxy are the variables.
+You can make groups of groups using the :children suffix.
+
+The standard approach for multistage environments by completely separating each operating environment.
+Instead of maintaining all of your hosts within a single inventory file, an inventory is maintained for each of your individual environments.
+
+dev
+prod
+stage etc
+Here is an example:
+Our project has a dev environment. All configuration element are in dev directory.
+
+Consider the following scenario where in dev environment there are two data centers to manage that has the following inventory file in ~/project/dev/inventory
+
+[dc1]
+node1.example.com
+node2.example.com
+
+[dc2]
+node3.example.com
+node4.example.com
+
+[datacenters:children]
+dc1
+dc2 
+
+project
+   dev
+    ├── ansible.cfg
+    ├── inventory
+    ├── group_vars
+    │     ├── datacenters
+    │     ├── dc1
+    │     └── dc2
+    ├── host_vars
+    │     ├── node1.example.com
+    │     ├── node2.example.com
+    │     ├── node3.example.com
+    │     └── node4.example.com   
+    └── playbook.yml
+Register - storing output of a task
+Ansible allows storing output of a task in a variable using the register keyword. 
+The output is saved into a variable that could be used later for either debugging 
+purposes or in order to achieve something else, such as implementing configuration based on a command's output.
+
+Example:
+---
+- hosts: example
+  vars:
+    foo: bar
+  tasks:
+  # Prints "Variable 'foo' is set to bar".
+  - debug: msg="Variable 'foo' is set to {{ foo }}"
+
+Critical point to be noted variables in playbook could be accessed using inverted comma "{{ variable_name }}"
+
+Next we try one more conditional task where in our playbook register-user.yml 
+we install tree package when user rahul is not present.
+
+Here is our playbook. 
+
+register-present.yml
+---
+- hosts: all
+  become: true
+  remote_user: vagrant
+  tasks:
+  - name: check user rahul is present
+    command: id rahul
+    ignore_errors: yes
+    register: result
+  - debug:
+      var: result
+  - name: install tree package where rahul user is not present
+    yum:
+      name: tree
+      state: latest
+
+    when: result.failed
+
+For the first time we are using 'where' to check a condition. 
+I have used debug section to demonstrate how we can find the condition to check. 
+
+When we run this playbook it would install tree package in node1 where rahul user is not present.
+Summary
+We learnt  where and how ansible variables could bepdefined
+and also learnt variable precedence.
+Reference
+https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html
+https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable

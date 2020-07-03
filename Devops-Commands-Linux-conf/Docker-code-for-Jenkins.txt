@@ -1,0 +1,59 @@
+FROM tomcat:latest
+
+MAINTAINER AR Suresh
+
+COPY ./webapp.war /usr/local/tomcat/webapps
+
+
+whoami
+sudo docker pull tomcat
+sudo docker images
+sudo docker stop server-1
+sudo docker rm server-1
+sudo docker run -itd --name server-1 centos
+sudo docker ps
+
+http://192.168.44.129:8080/job/frestylejob/55/console
+
+192.168.44.128 server-2
+
+hosts: ansible
+  become: true
+
+  tasks:
+  - name: create docker image using war file
+    command: docker build -t simple-devops-image:latest .
+    args:
+      chdir: /opt/k8s-playbooks
+
+  - name: create tag to image
+    command: docker tag simple-devops-image sureshyn/simple-devops-image
+
+  - name: push image on to dockerhub
+    command: docker push sureshyn/simple-devops-image
+
+  - name: remove docker images form ansible server
+   # command: docker rmi simple-devops-image:latest yankils/simple-devops-image
+    ignore_errors: yes
+
+target/hello-world-1.2.war
+
+target/webapp.war
+
+var/lib/jenkins/workspace/frestylejob/webapp/target/webapp.war
+
+sudo docker pull tomcat
+sudo docker images
+sudo docker COPY ./webapp /usr/local/tomcat/webapps
+sudo docker docker build -t simple-devops-image:1.0.1 .
+sudo docker args:
+      chdir: /opt/k8s-playbooks
+sudo docker tag simple-devops-image sureshyn/simple-devops-image
+sudo docker push sureshyn/simple-devops-image
+whoami
+sudo docker pull sureshyn/simple-devops-image
+sudo docker images
+sudo docker stop server-1
+sudo docker rm server-1
+sudo docker run -itd --name server-1 sureshyn/simple-devops-image
+sudo docker ps

@@ -1,0 +1,148 @@
+Server
+--------
+yum install epel-release
+
+yum -config-manager --enable epel
+
+yum update
+
+yum install git python python-devel python-pip openssl ansible -y
+
+ansible --version
+cd /etc/ansible
+vi ansible.cfg
+------------------
+inventory      = /etc/ansible/hosts
+sudo_user      = root
+
+un-comment it 
+
+vi hosts
+----------
+[batch43]
+client-ip
+..
+...
+
+useradd ansible
+passwd ansible
+
+visudo
+------------
+## Allow root to run any commands anywhere
+root    ALL=(ALL)       ALL
+ansible ALL=(ALL)       NOPASSWD: ALL
+
+Client Side
+--------
+useradd ansible
+passwd ansible
+
+visudo
+------------
+## Allow root to run any commands anywhere
+root    ALL=(ALL)       ALL
+ansible ALL=(ALL)       NOPASSWD: ALL
+
+Server
+---------
+su - ansible
+ls -la
+ssh-keygen
+ls -la
+ssh-copy-id ansible@192.168.198.136
+
+ssh client-ip
+
+
+scp src-file root@ip:/path
+scp test.txt root@192.168.58.141:/opt
+scp -r test-dir root@192.168.58.141:/opt
+
+
+ansible all -m ping
+ansible ip -m ping
+ansible devops43 -m ping
+
+ansible all -a "cat /etc/passwd"
+
+ansible devops43 -a "cat /etc/passwd"
+ansible all -a "ls -l /opt"
+
+ansible all -b -a "touch /opt/ansible99"
+ansible devops43 -a "rm -rf /opt/ansible99" -b
+
+ansible all -a "rm -rf /opt/ansible99" -b
+
+ansible all -b -a "mkdir /opt/web"
+
+ansible all -m copy -b  -a "src=/opt/terra dest=/opt"
+
+ansible all -b -a "yum install git -y"
+
+ansible all -b -a "yum remove git -y"
+
+ansible all -b -a "useradd sony"
+
+ansible all -b -a "userdel sony"
+
+ansible all -a "rpm -qa httpd"
+
+ansible all -b -a "yum remove httpd -y"
+
+ansible all -b -a "yum install ansible -y"
+
+192.168.198.136
+192.168.198.137
+
+
+-----------------
+
+remove=absent
+
+m= module
+a= attribute
+b= root permition
+
+=================
+https://www.youtube.com/watch?v=nE4b9mW2ym0&t=2s
+
+vim copy.yml
+
+- hosts: suresh
+  become: yes
+  tasks:
+  - name: "copying war/jar file to tomcat server"
+    copy:
+     src: /opt/workspace/target/*.war
+     dest: /opt/webapps/target
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

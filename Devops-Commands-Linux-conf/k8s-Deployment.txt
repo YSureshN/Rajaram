@@ -1,0 +1,109 @@
+Dockerfile
+
+
+FROM tomcat:latest
+
+MAINTAINER Y Suresh
+
+COPY ./webapp /usr/local/tomcat/webapps
+
+
+create-simple-devops-image.yml
+
+---
+- hosts: ansible-server
+  become: true
+
+  tasks:
+  - name: create docker image using war file
+    command: docker build -t simple-devops-image:latest .
+    args:
+      chdir: /opt/k8s-lab
+
+  - name: create tag to image
+    command: docker tag simple-devops-image yankils/simple-devops-image
+
+  - name: push image on to dockerhub
+    command: docker push yankils/simple-devops-image
+
+  - name: remove docker images form ansible server
+    command: docker rmi simple-devops-image:latest yankils/simple-devops-image
+    ignore_errors: yes
+
+
+valaxy-deploy.yml
+
+
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: valaxy-deployment
+spec:
+  selector:
+    matchLabels:
+      app: valaxy-devops-project
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      labels:
+        app: valaxy-devops-project
+    spec:
+      containers:
+      - name: valaxy-devops-project
+        image: yankils/simple-devops-image
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+
+
+kubernetes-valaxy-deployment.yml
+
+
+---
+- name: Create pods using deployment 
+  hosts: kubernetes 
+  become: true
+  user: root
+ 
+  tasks: 
+  - name: create a deployment
+    command: kubectl apply -f valaxy-deploy.yml
+ 
+  - name: update deployment with new pods if image updated in docker hub
+    command: kubectl rollout restart deployment.v1.apps/valaxy-deployment
+
+
+valaxy-service.yml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: valaxy-service
+  labels:
+    app: valaxy-devops-project
+spec:
+  selector:
+    app: valaxy-devops-project
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 31200
+
+kubernetes-valaxy-service.yml
+
+---
+- name: create service for deployment
+  hosts: kubernetes
+  become: true
+  user: root
+
+  tasks:
+  - name: create a service
+    command: kubectl apply -f valaxy-service.yml

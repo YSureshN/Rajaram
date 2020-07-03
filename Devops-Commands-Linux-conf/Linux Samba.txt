@@ -1,0 +1,26 @@
+https://www.youtube.com/watch?v=SI3rHpVXrdc  (Logrotating video)
+
+https://www.youtube.com/watch?v=uAdQnVhD_6Q  (Samba Video)
+
+yum install samba*
+systemctl enable smb
+systemctl enable nmb
+systemctl start smb
+systemctl start nmb
+
+mkdir /etc/samba/raja
+useradd raja -s /sbin/nologin (can't login via this user)
+smbpasswd -a raja 
+
+vim /etc/samba/smb.conf
+ 
+[share]
+comment = share for windows clients
+        path = /etc/samba/raja
+        browseable = yes
+        valid users = raja
+        writable = yes
+
+chown -R raja:root /etc/samba/raja
+
+\\192.168.44.135

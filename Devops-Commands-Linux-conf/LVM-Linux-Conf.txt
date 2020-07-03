@@ -1,0 +1,124 @@
+Cache removing
+
+sync; echo 1 > proc/sys/vm/drop_caches (cache clear)
+sync; echo 2 > proc/sys/vm/drop_caches (buffer clear)
+sync; echo 3 > proc/sys/vm/drop_caches (inotes clear)
+
+vim clear.sh
+
+#!/bin/bash
+# Clearing the Cache Memory
+sync; echo 1 > proc/sys/vm/drop_caches
+
+crontab -l
+crontab -e
+0 2 * * * sh /root/clear.sh
+
+
+crontab -l
+
+---------------------------------------------
+LVM
+
+lsblk
+
+cd /sys/class/scsi_host/
+ls
+
+ls /sys/class/scsi_host/ | while read host ; do echo "_ _ _" > /sys/class/scsi_host/$host/scan ; done
+
+lsblk
+
+cd ~
+
+fdisk /dev/sdb
+
+n
+p
+enter
+enter
++4G
+
+p (print the file system)
+
+t
+8e (for LVM)
+p
+wq (for quit)
+
+
+kernal updating
+
+partprobe /dev/sdb1
+pv/vg/LVM
+
+pvs (display pysical volume)
+
+pvcreate /dev/sdb1
+
+pvs
+
+vgcreate VG00 /dev/sdb1
+
+vgs (display group)
+
+lvs
+
+lvcreate -n lvm1 -L 2G VG00
+
+lvs
+
+mkfs.ext4 /dev/VG00/lvm1
+mkdir 5gb
+
+mount -t ext4 /dev/VG00/lvm1 /5gb/
+
+df -h
+
+how to dicrease lvm sige
+
+umount /5gb/
+df -h
+cat /etc/fstab
+
+## dev/sdb1 /test efs default 0 0 
+
+e2fsck -f /dev/VG00/lvm1
+lvs
+vgs
+resize2fs /dev/VG00/lvm1 4G
+lvreduse -L 4G /dev/VG00/lvm1
+lvs
+vgs
+now we should mount
+  how to increase lvm size
+
+umount /5gb/
+
+e2fsck -f /dev/VG00/lvm1
+lvs
+vgs
+
+lvextend -L 10G /dev/VG00/lvm1
+
+resize2fs /dev/VG00/lvm1 
+
+mount -t ext4 /dev/VG00/lvm1 /5gb/
+
+
+
+Alias
+-----------------
+alias 1="ls -ltr"
+alias
+
+ls -a
+.bashrc
+
+cat .bashrc (here perement to all users,,,)
+
+alias 1="ls -ltr"
+
+vim bashrc
+echo "/etc/bashrc"
+alias 1="ls -ltr"

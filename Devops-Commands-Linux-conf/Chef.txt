@@ -1,0 +1,54 @@
+knife bootstrap 192.168.198.128 -U root -P Suresh@988 -N Node-1
+
+Cookbook
+--------------
+cd chef-repo/cookbooks
+
+old syntx:
+-------------
+knfie cookbook create cookbook-name
+
+
+New:
+
+chef generate cookbook cookbook-name
+chef generate cookbook cookbook1
+cd cookbook1
+
+vi recipes/default.rb
+----------------------------
+#type "name" do
+#action :type
+#attribute = value
+#end
+
+file "/opt/chef1" do 
+action :create
+done
+
+knife cookbook upload cookbook1
+chef generate cookbook cookbook2
+
+Chef Client server
+-------------------------
+vi /etc/cron.d/chef-client
+
+*/2 * * * * root chef-client
+
+knife node run_list add Node1 "recipe[httpd]"
+knife node run_list remove Node1 "recipe[httpd]"
+knife node run_list add Node1 "recipe[httpd]", "recipe[cookbook1]"
+knife node run_list remove Node1 "recipe[httpd]", "recipe[cookbook1]"
+
+
+knife cookbook list
+knife node list
+knife node show Node1
+
+
+
+ChefDK
+---------
+
+https://packages.chef.io/files/stable/chefdk/4.0.60/el/7/chefdk-4.0.60-1.el7.x86_64.rpm
+
